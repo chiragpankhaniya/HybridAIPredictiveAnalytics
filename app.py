@@ -10,6 +10,7 @@ import xgboost as xgb
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
+# Streamlit page config
 st.set_page_config(page_title="Hybrid AI Predictive Analytics", layout="wide")
 st.title("Hybrid AI-Driven Predictive Analytics")
 
@@ -19,13 +20,20 @@ uploaded_file = st.file_uploader("Upload CSV with 'Date' and 'Sales' columns", t
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     
+    # Check for required columns
     if 'Date' not in df.columns or 'Sales' not in df.columns:
         st.error("CSV must contain 'Date' and 'Sales' columns")
     else:
         st.success("File loaded successfully!")
+        
+        # Preprocess data
         df['Date'] = pd.to_datetime(df['Date'])
         df.sort_values('Date', inplace=True)
         df.set_index('Date', inplace=True)
+        
+        # Fill missing 'Sales' values
+        df['Sales'] = df['Sales'].fillna(df['Sales'].mean())  # or use interpolation
+        
         st.write(df.head())
 
         y = df['Sales'].values
@@ -111,7 +119,6 @@ if uploaded_file is not None:
         # --- Future Prediction (Next 6 Months) ---
         st.subheader("Future Prediction (Next 6 Months)")
         last_data = y[-12:] if len(y) >= 12 else y  # last 12 months or all
-        # Use simple ensemble to forecast next 6 months
         future_preds = []
         temp_series = last_data.copy()
         for i in range(6):
@@ -124,7 +131,7 @@ if uploaded_file is not None:
             xgb_pred = xgb_model.predict(X_temp[-1].reshape(1,-1))[0]
             lstm_input = scaler.transform(temp_series[-look_back:].reshape(-1,1)).reshape(1, look_back, 1)
             lstm_pred = scaler.inverse_transform(lstm_model.predict(lstm_input)).flatten()[0]
-            ensemble_next = (sar_pred + xgb_pred + lstm_pred)/3
+            ensemble_next = (sar_pred + xgb_pred + lstm_pred) / 3
             future_preds.append(ensemble_next)
             temp_series = np.append(temp_series, ensemble_next)
 
