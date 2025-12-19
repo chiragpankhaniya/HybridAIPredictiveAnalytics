@@ -30,7 +30,7 @@ requests==2.32.5
 rich==13.9.4
 tenacity==8.5.0
 toml==0.10.2
-typing-extensions>=4.3.0,<4.6.0
+typing-extensions>=4.10.0,<5
 tzlocal==5.3.1
 validators==0.35.0
 gitpython==3.1.45
