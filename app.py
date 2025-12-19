@@ -110,7 +110,7 @@ if uploaded_file is not None:
         ax.set_xlabel("Date")
         ax.set_ylabel("Sales")
         ax.legend()
-        st.pyplot(fig)
+        st.pyplot(fig)  # Pass the figure explicitly to st.pyplot()
 
         # --- Future Prediction (Next 6 Months) ---
         st.subheader("Future Prediction (Next 6 Months)")
@@ -159,7 +159,7 @@ if uploaded_file is not None:
         ax2.set_xlabel('Date')
         ax2.set_ylabel('Sales')
         ax2.legend()
-        st.pyplot(fig2)
+        st.pyplot(fig2)  # Pass the figure explicitly to st.pyplot()
 
 else:
     st.info("Upload a CSV file to start predictions.")
